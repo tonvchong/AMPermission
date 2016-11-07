@@ -12,7 +12,7 @@ dependencies {
 }
 
 publish {
-    artifactId = 'ampermission-compiler'
+    artifactId = 'permission-compiler'
     userOrg = rootProject.userOrg
     groupId = rootProject.groupId
     uploadName = rootProject.uploadName
