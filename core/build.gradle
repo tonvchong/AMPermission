@@ -1,0 +1,72 @@
+apply plugin: 'com.android.library'
+apply plugin: 'bintray-release'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "25.0.0"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+    compile project(':annotation')
+}
+
+// Jar
+task androidJar(type: Jar) {
+    dependsOn assemble
+    group 'Build'
+    description 'jar output'
+    from zipTree('build/intermediates/bundles/release/classes.jar')
+    from zipTree('../compiler/build/libs/compiler.jar')
+    from zipTree('../annotation/build/libs/annotation.jar')
+}
+
+// javadoc tasks
+android.libraryVariants.all { variant ->
+    task("javadoc${variant.name.capitalize()}", type: Javadoc) {
+        description "Generates Javadoc for $variant.name."
+        group 'Docs'
+        source = variant.javaCompile.source
+        source "../annotation/src/main/java"
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+    }
+}
+
+publish {
+    artifactId = 'ampermission-core'
+    userOrg = rootProject.userOrg
+    groupId = rootProject.groupId
+    uploadName = rootProject.uploadName
+    publishVersion = rootProject.publishVersion
+    description = rootProject.description
+    website = rootProject.website
+    licences = rootProject.licences
+}
+
+task copyJar(type: Copy) {
+    from('build/libs/core.jar')
+    into('../output/')
+    rename ('core.jar', 'ampermission.jar')
+}

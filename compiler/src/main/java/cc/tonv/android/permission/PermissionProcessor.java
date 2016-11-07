@@ -25,30 +25,23 @@ import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
-import cc.tonv.android.annotation.PermissionDenied;
-import cc.tonv.android.annotation.PermissionGrant;
-import cc.tonv.android.annotation.ShowRequestPermissionRationale;
-
 import static javax.lang.model.SourceVersion.latestSupported;
 
 @AutoService(Processor.class)
-public class PermissionProcessor extends AbstractProcessor
-{
+public class PermissionProcessor extends AbstractProcessor {
     private Messager messager;
     private Elements elementUtils;
     private Map<String, ProxyInfo> mProxyMap = new HashMap<String, ProxyInfo>();
 
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnv)
-    {
+    public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         messager = processingEnv.getMessager();
         elementUtils = processingEnv.getElementUtils();
     }
 
     @Override
-    public Set<String> getSupportedAnnotationTypes()
-    {
+    public Set<String> getSupportedAnnotationTypes() {
         HashSet<String> supportTypes = new LinkedHashSet<>();
         supportTypes.add(PermissionDenied.class.getCanonicalName());
         supportTypes.add(PermissionGrant.class.getCanonicalName());
@@ -57,15 +50,12 @@ public class PermissionProcessor extends AbstractProcessor
     }
 
     @Override
-    public SourceVersion getSupportedSourceVersion()
-    {
+    public SourceVersion getSupportedSourceVersion() {
         return latestSupported();
     }
 
-    private boolean processAnnotations(RoundEnvironment roundEnv, Class<? extends Annotation> clazz)
-    {
-        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz))
-        {
+    private boolean processAnnotations(RoundEnvironment roundEnv, Class<? extends Annotation> clazz) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {
 
             if (!checkMethodValid(annotatedElement, clazz)) return false;
 
@@ -76,8 +66,7 @@ public class PermissionProcessor extends AbstractProcessor
             String fqClassName = classElement.getQualifiedName().toString();
 
             ProxyInfo proxyInfo = mProxyMap.get(fqClassName);
-            if (proxyInfo == null)
-            {
+            if (proxyInfo == null) {
                 proxyInfo = new ProxyInfo(elementUtils, classElement);
                 mProxyMap.put(fqClassName, proxyInfo);
                 proxyInfo.setTypeElement(classElement);
@@ -85,20 +74,16 @@ public class PermissionProcessor extends AbstractProcessor
 
 
             Annotation annotation = annotatedMethod.getAnnotation(clazz);
-            if (annotation instanceof PermissionGrant)
-            {
+            if (annotation instanceof PermissionGrant) {
                 int requestCode = ((PermissionGrant) annotation).value();
                 proxyInfo.grantMethodMap.put(requestCode, annotatedMethod.getSimpleName().toString());
-            } else if (annotation instanceof PermissionDenied)
-            {
+            } else if (annotation instanceof PermissionDenied) {
                 int requestCode = ((PermissionDenied) annotation).value();
                 proxyInfo.deniedMethodMap.put(requestCode, annotatedMethod.getSimpleName().toString());
-            } else if (annotation instanceof ShowRequestPermissionRationale)
-            {
+            } else if (annotation instanceof ShowRequestPermissionRationale) {
                 int requestCode = ((ShowRequestPermissionRationale) annotation).value();
                 proxyInfo.rationaleMethodMap.put(requestCode, annotatedMethod.getSimpleName().toString());
-            } else
-            {
+            } else {
                 error(annotatedElement, "%s not support .", clazz.getSimpleName());
                 return false;
             }
@@ -109,8 +94,7 @@ public class PermissionProcessor extends AbstractProcessor
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
-    {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         mProxyMap.clear();
         messager.printMessage(Diagnostic.Kind.NOTE, "process...");
 
@@ -119,11 +103,9 @@ public class PermissionProcessor extends AbstractProcessor
         if (!processAnnotations(roundEnv, ShowRequestPermissionRationale.class)) return false;
 
 
-        for (String key : mProxyMap.keySet())
-        {
+        for (String key : mProxyMap.keySet()) {
             ProxyInfo proxyInfo = mProxyMap.get(key);
-            try
-            {
+            try {
                 JavaFileObject jfo = processingEnv.getFiler().createSourceFile(
                         proxyInfo.getProxyClassFullName(),
                         proxyInfo.getTypeElement());
@@ -131,8 +113,7 @@ public class PermissionProcessor extends AbstractProcessor
                 writer.write(proxyInfo.generateJavaCode());
                 writer.flush();
                 writer.close();
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 error(proxyInfo.getTypeElement(),
                         "Unable to write injector for type %s: %s",
                         proxyInfo.getTypeElement(), e.getMessage());
@@ -142,24 +123,19 @@ public class PermissionProcessor extends AbstractProcessor
         return true;
     }
 
-    private void error(Element element, String message, Object... args)
-    {
-        if (args.length > 0)
-        {
+    private void error(Element element, String message, Object... args) {
+        if (args.length > 0) {
             message = String.format(message, args);
         }
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message, element);
     }
 
-    private boolean checkMethodValid(Element annotatedElement, Class clazz)
-    {
-        if (annotatedElement.getKind() != ElementKind.METHOD)
-        {
+    private boolean checkMethodValid(Element annotatedElement, Class clazz) {
+        if (annotatedElement.getKind() != ElementKind.METHOD) {
             error(annotatedElement, "%s must be declared on method.", clazz.getSimpleName());
             return false;
         }
-        if (ClassValidator.isPrivate(annotatedElement) || ClassValidator.isAbstract(annotatedElement))
-        {
+        if (ClassValidator.isPrivate(annotatedElement) || ClassValidator.isAbstract(annotatedElement)) {
             error(annotatedElement, "%s() must can not be abstract or private.", annotatedElement.getSimpleName());
             return false;
         }
