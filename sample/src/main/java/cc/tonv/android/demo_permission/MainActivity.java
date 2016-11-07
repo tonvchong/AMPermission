@@ -12,6 +12,9 @@ import cc.tonv.android.permission.PermissionDenied;
 import cc.tonv.android.permission.PermissionGrant;
 import cc.tonv.android.permission.ShowRequestPermissionRationale;
 
+/**
+ * Created by tonvchong on 2016/11/7 0007.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Button mBtnSdcard, mBtnCallPhone;

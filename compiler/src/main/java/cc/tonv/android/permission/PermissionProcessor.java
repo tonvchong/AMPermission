@@ -27,6 +27,9 @@ import javax.tools.JavaFileObject;
 
 import static javax.lang.model.SourceVersion.latestSupported;
 
+/**
+ * Created by tonvchong on 2016/11/7 0007.
+ */
 @AutoService(Processor.class)
 public class PermissionProcessor extends AbstractProcessor {
     private Messager messager;

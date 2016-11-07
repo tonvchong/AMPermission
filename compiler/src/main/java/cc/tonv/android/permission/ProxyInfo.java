@@ -7,6 +7,9 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 
+/**
+ * Created by tonvchong on 2016/11/7 0007.
+ */
 public class ProxyInfo {
     private String packageName;
     private String proxyClassName;

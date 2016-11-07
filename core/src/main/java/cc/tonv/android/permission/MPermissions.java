@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by tonvchong on 2016/11/7 0007.
+ */
 public class MPermissions {
     private static final String SUFFIX = "$$PermissionProxy";
 

@@ -7,6 +7,9 @@ import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.PRIVATE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
+/**
+ * Created by tonvchong on 2016/11/7 0007.
+ */
 final class ClassValidator {
     static boolean isPublic(Element annotatedClass) {
         return annotatedClass.getModifiers().contains(PUBLIC);

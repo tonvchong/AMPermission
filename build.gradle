@@ -28,7 +28,7 @@ ext {
     userOrg = 'airchr'
     groupId = 'cc.tonv'
     uploadName = 'AMPermission'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     description = 'Use annotation processor to easy use runtime permission for Android M + '
     website = 'https://github.com/tonvchong/AMPermission'
     licences = ['Apache-2.0']
