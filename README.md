@@ -145,7 +145,7 @@ public class TestFragment extends Fragment {
 -keep class cc.tonv.android.** {*;}
 -keep interface cc.tonv.android.** { *; }
 -keep class **$$PermissionProxy { *; }
-
+```
 
 ## License
 ```
